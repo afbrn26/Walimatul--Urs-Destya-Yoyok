@@ -553,8 +553,58 @@
   transition: background-color 0.3s ease;
 }
 
+/* Animasi Fade & Zoom */
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animasi Slide Up */
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Class untuk gambar animasi */
+.animate-fade-zoom {
+  animation: fadeInZoom 1s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slide-up {
+  animation: slideUp 1s ease-out forwards;
+  opacity: 0;
+}
 .custom-button:hover {
   background-color: #a97f5e;
+}
+
+/* Animasi Pop-In: Fade + Zoom + Slide Up */
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.7) translateY(30px); }
+  60% { opacity: 1; transform: scale(1.05) translateY(-10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-pop-in {
+  animation: none;
+  opacity: 0;
+}
+
+.animate-pop-in.active {
+  animation: popIn 1s ease-out forwards;
 }
   </style>
 </head>
@@ -575,19 +625,19 @@
       <!-- Section 1 -->
       <div class="section" data-anchor="walimatul">
         <div class="invitation-box">
-          <img src="a.png" class="fade-in-image" alt="Destya & Yoyok" style="width:100%; max-width:400px; border-radius:10px;">
+          <img src="a.png" class="fade-in-image animate-pop-in animate-on-scroll" alt="Destya & Yoyok" style="width:100%; max-width:400px; border-radius:10px;">
         </div>
       </div>
       <!-- Section 2 -->
       <div class="section">
         <div class="verse-box fadeIn">
-          <img src="b.png" class="fade-in-image" alt="Ayat Suci" style="width:100%; max-width:400px; border-radius:10px;">
+          <img src="b.png" class="fade-in-image animate-pop-in animate-on-scroll" alt="Ayat Suci" style="width:100%; max-width:400px; border-radius:10px;">
         </div>
       </div>
       <!-- Section 3 -->
       <div class="section">
         <div class="invitation-box">
-          <img src="c.png" class="fade-in-image" alt="Prosesi Pernikahan" style="width:100%; max-width:400px; border-radius:10px;">
+          <img src="c.png" class="fade-in-image animate-pop-in animate-on-scroll" alt="Prosesi Pernikahan" style="width:100%; max-width:400px; border-radius:10px;">
         </div>
         <div id="countdown-container">
           <span id="days">0</span> Hari
@@ -597,10 +647,22 @@
         </div>
       </div>
 
+      <div class="section">
+        <div class="invitation-box">
+          <img src="c1.png" class="fade-in-image animate-pop-in animate-on-scroll" alt="Prosesi Pernikahan" style="width:100%; max-width:400px; border-radius:10px;">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="invitation-box">
+          <img src="c2.png" class="fade-in-image animate-pop-in animate-on-scroll" alt="Prosesi Pernikahan" style="width:100%; max-width:400px; border-radius:10px;">
+        </div>
+      </div>
+
       <!-- Section 4 -->
       <div class="section">
         <div class="invitation-box">
-          <img src="d.png" class="fade-in-image" alt="Lokasi Acara" style="width:100%; max-width:400px; border-radius:10px;">
+          <img src="d.png" class="fade-in-image animate-pop-in animate-on-scroll" alt="Lokasi Acara" style="width:100%; max-width:400px; border-radius:10px;">
         </div>
           <a href="https://maps.app.goo.gl/KBmvjHVHysRFZjkm9" target="_blank" id="location-button" class="countdown-container">
             <span>Klik untuk Lihat Lokasi</span>
@@ -610,10 +672,10 @@
       <!-- Section 5 -->
       <div class="section">
         <div class="box-section">
-          <img src="box.png" alt="Foto Pernikahan" class="form-background">
+          <img src="box.png" alt="Foto Pernikahan" class="form-background fade-in-image animate-pop-in animate-on-scroll">
           <div class="form-overlay">            
             <form id="guest-form" class="guest-form">
-            <a href="konfirmasi.html" target="_blank" class="custom-button">Isi Konfirmasi Kehadiran & Ucapan</a>
+            <a href="konfirmasi.html" target="_blank" class="custom-button fade-in-image animate-pop-in animate-on-scroll">Isi Konfirmasi Kehadiran & Ucapan</a>
             </form>
           </div>
         </div>
@@ -699,17 +761,25 @@
     };
   });
 
-  // Pemicu animasi saat halaman Surah Ar-Rum masuk ke dalam viewport
+  const animateElements = document.querySelectorAll('.animate-on-scroll');
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
+      const el = entry.target;
+
       if (entry.isIntersecting) {
-        activateAnimations();
-        observer.unobserve(entry.target);
+        // Hapus class dulu agar animasi bisa main ulang
+        el.classList.remove('active');
+        void el.offsetWidth; // Force reflow
+        el.classList.add('active');
       }
     });
   }, {
-    rootMargin: '0px 0px -50px 0px',
-    threshold: 0.1
+    threshold: 0.2
+  });
+
+  animateElements.forEach(el => {
+    observer.observe(el);
   });
 
   const arRumSection = document.querySelector('.section');
@@ -774,6 +844,7 @@ document.getElementById('guest-form')?.addEventListener('submit', function(e) {
 
 // Muat ucapan saat halaman dimuat
 window.addEventListener('DOMContentLoaded', loadGuestList);
+
 </script>
 </body>
 </html>
